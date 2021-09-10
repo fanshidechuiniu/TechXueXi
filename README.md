@@ -1,6 +1,8 @@
 # 前言
 
-**[在线聊天室地址及说明](https://github.com/TechXueXi/TechXueXi/issues/14)**
+**[交流群地址及说明](https://github.com/TechXueXi/TechXueXi/issues/14)**
+
+**我们随时删库跑路，请加交流群防失联。**
 
 > 本项目基于某已终止的项目，请自行搜索后前往star。我们由衷地敬佩这个领域的先锋们。  
 > 这是全网较好的成熟产品，但已停止，我们于心不忍。本仓库现由“科技强国”组织进行维护。
@@ -106,7 +108,7 @@ TechXueXi为python学 xi 交流的开源非营利项目，仅作为程序员之�
 
 # 📗使用方法 🔧更新方法 💾下载地址
 
-详见： [使用方法-更新方法-下载方式.md](./使用方法-更新方法-下载方式.md)
+详见： [使用方法-更新方法-下载方式.md](https://github.com/TechXueXi/TechXueXi/blob/dev/%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95-%E6%9B%B4%E6%96%B0%E6%96%B9%E6%B3%95-%E4%B8%8B%E8%BD%BD%E6%96%B9%E5%BC%8F.md)
 
 
 
