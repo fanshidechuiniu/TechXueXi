@@ -1,6 +1,8 @@
 # 前言
 
-**[交流群地址及说明](https://github.com/TechXueXi/TechXueXi/issues/14)**
+**[交流群地址及说明（点击查看）](https://github.com/TechXueXi/TechXueXi/issues/14)**
+
+**重要公告**： [公告栏（国内打不开）](https://t.me/s/techxuexi_notice) || [公告栏（国内可以打开）](https://notice.techxuexi.workers.dev)
 
 **我们随时删库跑路，请加交流群防失联。**
 
