@@ -9,6 +9,7 @@ from pdlearn.score import show_score
 from pdlearn.const import const
 from pdlearn.log import *
 from pdlearn import globalvar as gl
+from pdlearn.exp_catch import exception_catcher
 
 def generate_tiku_data(quiz_type=None, tip=None, option=None, answer=None, question=None):
     """
@@ -40,7 +41,7 @@ def find_available_quiz(quiz_type, driver_ans, uid):
                 # auto.prompt("wait for Enter press...")
                 return to_click
 
-
+@exception_catcher()
 def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_xpath, uid=None, driver_default=None):
     quiz_zh_CN={"daily": "每日", "weekly": "每周", "zhuanxiang": "专项"}
     if(quiz_type not in ["daily", "weekly", "zhuanxiang"]):
@@ -57,15 +58,15 @@ def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_
         driver_daily = driver_ans
         driver_weekly = driver_ans
         driver_zhuanxiang = driver_ans
-        try:
-            nohead = gl.nohead
-        except:
-            nohead=False
-        if nohead:
-            print("使用默认窗口大小")
-        else:
-            driver_ans.driver.maximize_window()
-            print('请保持窗口最大化\n'*3)
+        # try:
+        #     nohead = gl.nohead
+        # except:
+        #     nohead=False
+        # if nohead:
+        #     print("使用默认窗口大小")
+        # else:
+        driver_ans.driver.maximize_window()
+        print('请保持窗口最大化\n'*3)
         driver_ans.get_url("https://www.xuexi.cn/notFound.html")
         driver_ans.set_cookies(cookies)
         pass_count = 0
@@ -74,13 +75,17 @@ def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_
         if scores[quiz_type] < score_all:
             letters = list("ABCDEFGHIJKLMN")
             driver_ans.get_url('https://pc.xuexi.cn/points/my-points.html')
-            while driver_ans.title_is(u"我的积分"):  # 页面title为积分则一直循环
+            refresh_my_page_count=0
+            while driver_ans.title_is(u"我的积分") and refresh_my_page_count<20 :  # 页面title为积分则一直循环
                 time.sleep(1)  # 等待页面刷新提示
                 refresh_buttons = driver_ans.driver.find_elements_by_css_selector(".ant-modal-wrap .ant-btn:not(.ant-btn-primary)")
                 if len(refresh_buttons) > 0:  #
                     refresh_buttons[0].click()
                 driver_ans.click_xpath(quiz_xpath)  # 点击各个题目的去答题按钮
                 time.sleep(1)
+                refresh_my_page_count+=1
+                if refresh_my_page_count>=20:
+                    print("没有找到答题按钮")
             if quiz_type != "daily":  # 如果是每日答题就不用找available了
                 # 此处修改是因为页面可能刷新后导致的查找元素button 丢失从而引发异常重新此处用可以重新查找来解决
                 try:
@@ -140,30 +145,34 @@ def answer_question(quiz_type, cookies, scores, score_all, quiz_xpath, category_
                         print("暂时略过已达到 5 次，【 建议您将此题目的题干、提示、选项信息提交到github问题收集issue：https://github.com/TechXueXi/TechXueXi/issues/29 】")
                         auto.prompt("等待用户手动答题...完成后请在此按回车...")
                         pass_count = 0
+                        continue
                     if quiz_type == "daily":  #####
                         log_daily("！！！！！本题没有找到提示，暂时略过！！！！！")
                         auto.prompt("等待用户手动答题...完成后请在此按回车...")
                         time.sleep(1)
+                        continue
                     if "填空题" in category:
                         print('没有找到提示，暂时略过')
                         ##### print('使用默认答案  好 ')   #如无填空答案，使用默认答案 好 字 by Sean
                         ##### tips = ['好']
                         continue  #####
                     elif "多选题" in category:
-                        print('没有找到提示，暂时略过')
+                        print('没有找到提示，多选题默认全选')
                         ##### print('使用默认答案 全选')    #by Sean
-                        continue  #####
+                        ## continue  #####
+                        tips=driver_daily.radio_get_options()
                     elif "单选题" in category:
-                        print('没有找到提示，暂时略过')  # 如无单选答案，使用默认答案
+                        print('没有找到提示，单选题默认选A')  # 如无单选答案，使用默认答案
                         ##### print('使用默认答案 B')   #by Sean
-                        continue  #####
+                        # continue  #####
                         # return driver_daily._search(driver_daily.content, driver_daily.options, driver_daily.excludes)
+                        tips = [driver_daily.radio_get_options()[0]]
                     else:
                         print("题目类型非法")
                         if quiz_type == "daily":
                             log_daily("！！！！！无提示，题目类型非法！！！！！")
                         break
-                else:
+                if tips:
                     if "填空题" in category:
                         answer = tips
                         if quiz_type != "zhuanxiang":

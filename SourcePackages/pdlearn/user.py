@@ -11,19 +11,21 @@ from pdlearn import score
 from pdlearn import file
 from pdlearn import color
 from pdlearn.mydriver import Mydriver
+from pdlearn.exp_catch import exception_catcher
 
 
 def get_userId(cookies):
     userId, total, scores,userName = score.get_score(cookies)
     return userId
 
-
+@exception_catcher(reserve_value="_")
 def get_fullname(userId):
-    fullname = ""
+    fullname = "_"
+    nickname=""
     status = get_user_status()
     for i in status["userId_mapping"]:
-        nickname = status["userId_mapping"][i]
         if (str(userId) == i):
+            nickname = status["userId_mapping"][i]
             fullname = i + '_' + nickname
             break
     if (nickname == ""):
@@ -44,7 +46,7 @@ def get_fullname(userId):
         save_fullname(fullname)
     return fullname
 
-
+@exception_catcher(reserve_value="")
 def get_nickname(userId):
     return get_fullname(userId).split('_', 1)[1]
 
@@ -320,6 +322,6 @@ def shutdown(stime):
             print("\r{}秒后关机".format(stime - i), end="")
             time.sleep(1)
     else:
-        print("无自动关机任务，已释放程序内存，1分钟后窗口将自动关闭")
+        print("无自动关机任务，已释放程序内存，窗口将自动关闭")
         # time.sleep(600)
-        os.system("timeout 60")
+        # os.system("timeout 60")
